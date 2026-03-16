@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum Role {
+  SUPER_ADMIN
+  SCHOOL_ADMIN
+  FINANCE
+  TEACHER
+  STUDENT
+  PARENT
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model School {
+  id               String    @id @default(uuid())
+  name             String
+  domain           String?   @unique
+  status           String    @default("ACTIVE") // ACTIVE, INACTIVE, SUSPENDED
+  subscriptionPlan String    @default("BASIC")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
+
+  users        User[]
+  classes      Class[]
+  subjects     Subject[]
+  invoices     Invoice[]
+  academicYears AcademicYear[]
+
+  @@index([domain])
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  role          Role      @default(STUDENT)
+  schoolId      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  school        School?   @relation(fields: [schoolId], references: [id])
+  
+  studentProfile Student?
+  parentProfile  Parent?
+  teacherProfile Teacher?
+
+  @@index([email])
+  @@index([schoolId])
+}
+
+model Student {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  registrationId String    @unique // Matricula
+  dateOfBirth    DateTime?
+  enrollmentDate DateTime  @default(now())
+  
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId       String?
+  parent         Parent?   @relation(fields: [parentId], references: [id], onDelete: SetNull)
+  
+  enrollments    Enrollment[]
+  attendances    Attendance[]
+  grades         Grade[]
+
+  @@index([userId])
+}
+
+model Parent {
+  id       String    @id @default(uuid())
+  userId   String    @unique
+  phone    String?
+  address  String?
+  
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  children Student[]
+  invoices Invoice[]
+
+  @@index([userId])
+}
+
+model Teacher {
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  specialization String?
+  
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  classSubjects  ClassSubject[]
+
+  @@index([userId])
+}
+
+model AcademicYear {
+  id        String   @id @default(uuid())
+  year      Int
+  startDate DateTime
+  endDate   DateTime
+  schoolId  String
+  
+  school    School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  classes   Class[]
+
+  @@unique([schoolId, year])
+}
+
+model Class {
+  id             String    @id @default(uuid())
+  name           String
+  schoolId       String
+  academicYearId String
+  capacity       Int       @default(30)
+  
+  school         School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  
+  enrollments    Enrollment[]
+  classSubjects  ClassSubject[]
+  attendances    Attendance[]
+
+  @@index([schoolId])
+}
+
+model Subject {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  schoolId    String
+  
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  classSubjects ClassSubject[]
+
+  @@index([schoolId])
+}
+
+// Relates a Class, a Subject, and a Teacher assigned to it
+model ClassSubject {
+  id        String   @id @default(uuid())
+  classId   String
+  subjectId String
+  teacherId String?
+
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  teacher   Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  
+  grades    Grade[]
+
+  @@unique([classId, subjectId])
+}
+
+model Enrollment {
+  id        String   @id @default(uuid())
+  studentId String
+  classId   String
+  date      DateTime @default(now())
+  
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, classId])
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  studentId String
+  classId   String
+  date      DateTime @default(now()) @db.Date // Store only date portion
+  status    AttendanceStatus
+  notes     String?
+  
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, classId, date])
+}
+
+model Grade {
+  id             String   @id @default(uuid())
+  studentId      String
+  classSubjectId String
+  value          Float
+  term           Int      // 1st quarter, 2nd quarter, etc.
+  type           String   // EXAM, ASSIGNMENT, PROJECT
+  date           DateTime @default(now())
+  
+  student        Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classSubject   ClassSubject @relation(fields: [classSubjectId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, classSubjectId])
+}
+
+model Invoice {
+  id          String   @id @default(uuid())
+  schoolId    String
+  parentId    String
+  amount      Float
+  dueDate     DateTime
+  status      InvoiceStatus @default(PENDING)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  school      School   @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  parent      Parent   @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  payments    Payment[]
+
+  @@index([schoolId])
+  @@index([parentId])
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  invoiceId     String
+  amount        Float
+  paymentDate   DateTime @default(now())
+  paymentMethod String   // CREDIT_CARD, PIX, BOLETO
+  transactionId String?
+  
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+}

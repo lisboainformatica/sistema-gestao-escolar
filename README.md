@@ -1,36 +1,371 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sistema de Gestão Escolar (SGE)
 
-## Getting Started
+Sistema completo de **Gestão Escolar (School Management System)** desenvolvido com tecnologias modernas para administração acadêmica, financeira e comunicação entre escola, professores, alunos e responsáveis.
 
-First, run the development server:
+O sistema foi projetado para ser **escalável, seguro e multi-escola (SaaS)**, permitindo que várias instituições utilizem a mesma plataforma com dados isolados.
+
+---
+
+# Tecnologias Utilizadas
+
+## Frontend
+
+* Next.js 14 (App Router)
+* React
+* TypeScript
+* TailwindCSS
+* Shadcn UI
+* React Hook Form
+* Zod (validação)
+
+## Backend
+
+* Node.js
+* API Routes do Next.js
+* Prisma ORM
+
+## Banco de Dados
+
+* PostgreSQL
+
+## Autenticação e Segurança
+
+* NextAuth
+* JWT
+* RBAC (Role Based Access Control)
+* Criptografia de senhas
+* Proteção de rotas
+* Logs de auditoria
+
+---
+
+# Arquitetura do Sistema
+
+O projeto segue boas práticas de engenharia de software:
+
+* Clean Architecture
+* SOLID
+* Repository Pattern
+* Service Layer
+* Modularização
+
+Estrutura de camadas:
+
+Interface (Frontend)
+API
+Services
+Repositories
+Models
+Middlewares
+Validações
+Autenticação
+Permissões
+
+---
+
+# Estrutura do Projeto
+
+```
+/app
+/components
+/hooks
+/lib
+/middlewares
+/models
+/prisma
+/repositories
+/services
+/utils
+/api
+```
+
+Descrição das principais pastas:
+
+| Pasta        | Descrição                    |
+| ------------ | ---------------------------- |
+| app          | páginas e rotas do Next.js   |
+| components   | componentes reutilizáveis    |
+| hooks        | hooks personalizados         |
+| prisma       | schema do banco e migrations |
+| services     | lógica de negócio            |
+| repositories | acesso ao banco              |
+| models       | entidades do sistema         |
+| middlewares  | autenticação e validações    |
+| utils        | funções auxiliares           |
+
+---
+
+# Tipos de Usuário
+
+O sistema possui controle de acesso baseado em papéis.
+
+| Perfil                  | Permissões                    |
+| ----------------------- | ----------------------------- |
+| Super Admin             | controla toda a plataforma    |
+| Administrador da escola | administra a escola           |
+| Financeiro              | controla pagamentos           |
+| Professor               | gerencia turmas e notas       |
+| Aluno                   | consulta notas e frequência   |
+| Responsável             | acompanha desempenho do aluno |
+
+---
+
+# Módulos do Sistema
+
+## Administração da Plataforma
+
+* cadastro de escolas
+* gerenciamento de assinaturas
+* dashboard da plataforma
+* logs do sistema
+
+## Gestão da Escola
+
+* cadastro da escola
+* anos letivos
+* calendário escolar
+* cursos
+* turmas
+* disciplinas
+
+## Gestão de Alunos
+
+* cadastro completo
+* matrícula
+* documentos
+* histórico escolar
+* transferência de turma
+
+## Gestão de Professores
+
+* cadastro de professores
+* turmas atribuídas
+* disciplinas
+* agenda
+
+## Módulo Acadêmico
+
+* planejamento de aulas
+* tarefas
+* provas
+* lançamento de notas
+* cálculo automático de médias
+* geração de boletim
+
+## Sistema de Presença
+
+* presença diária
+* faltas
+* atrasos
+* relatórios de frequência
+
+## Portal do Aluno
+
+* notas
+* frequência
+* tarefas
+* materiais didáticos
+* avisos
+
+## Portal dos Pais
+
+* acompanhamento do aluno
+* notas
+* frequência
+* comunicação com professores
+
+## Financeiro
+
+* planos de mensalidade
+* geração de cobranças
+* boletos
+* PIX
+* controle de pagamentos
+* inadimplência
+* fluxo de caixa
+
+## Comunicação
+
+* avisos da escola
+* notificações
+* mensagens internas
+
+## Biblioteca
+
+* cadastro de livros
+* empréstimos
+* devoluções
+* multas
+
+## Relatórios e Analytics
+
+* desempenho dos alunos
+* frequência escolar
+* relatórios financeiros
+* dashboards administrativos
+
+---
+
+# Banco de Dados
+
+Principais tabelas do sistema:
+
+```
+users
+roles
+permissions
+schools
+students
+parents
+teachers
+classes
+subjects
+enrollments
+attendance
+grades
+exams
+assignments
+report_cards
+tuition_plans
+invoices
+payments
+messages
+notifications
+library_books
+library_loans
+audit_logs
+activity_logs
+```
+
+O banco utiliza:
+
+* chaves estrangeiras
+* índices
+* timestamps
+* soft delete
+
+---
+
+# Instalação do Projeto
+
+## 1 Clonar o repositório
+
+```bash
+git clone https://github.com/seu-usuario/sistema-gestao-escolar.git
+```
+
+Entrar na pasta:
+
+```bash
+cd sistema-gestao-escolar
+```
+
+---
+
+## 2 Instalar dependências
+
+```bash
+npm install
+```
+
+ou
+
+```bash
+yarn install
+```
+
+---
+
+## 3 Configurar variáveis de ambiente
+
+Criar arquivo `.env`:
+
+```
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/escola"
+NEXTAUTH_SECRET="segredo"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+---
+
+## 4 Configurar banco de dados
+
+Executar migrations:
+
+```bash
+npx prisma migrate dev
+```
+
+Gerar cliente Prisma:
+
+```bash
+npx prisma generate
+```
+
+---
+
+## 5 Rodar o projeto
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acessar:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# Segurança
 
-To learn more about Next.js, take a look at the following resources:
+O sistema implementa:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* autenticação segura
+* controle RBAC
+* criptografia de senhas
+* validação de dados
+* rate limiting
+* logs de auditoria
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+# Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+O sistema pode ser implantado em:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+* Vercel
+* Docker
+* VPS Linux
+* plataformas cloud
+
+Fluxo básico:
+
+1. configurar banco PostgreSQL
+2. configurar variáveis de ambiente
+3. executar migrations
+4. iniciar aplicação
+
+---
+
+# Funcionalidades Futuras
+
+* aplicativo mobile
+* integração com gateways de pagamento
+* reconhecimento facial para presença
+* integração com plataformas educacionais
+* inteligência artificial para análise de desempenho
+
+---
+
+# Licença
+
+Este projeto pode ser utilizado como base para sistemas educacionais, projetos acadêmicos ou soluções comerciais.
+
+---
+
+# Autor
+
+Vinicius Silva de Andrade
+Projeto desenvolvido para estudo e criação de sistemas educacionais modernos.

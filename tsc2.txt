@@ -1,0 +1,9 @@
+﻿lib/prisma.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'PrismaClient'.
+lib/rbac.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'Role'.
+middleware.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'Role'.
+prisma/seed.ts(1,10): error TS2305: Module '"@prisma/client"' has no exported member 'PrismaClient'.
+prisma/seed.ts(1,24): error TS2305: Module '"@prisma/client"' has no exported member 'Role'.
+repositories/UserRepository.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'Prisma'.
+repositories/UserRepository.ts(2,18): error TS2305: Module '"@prisma/client"' has no exported member 'User'.
+schemas/user.schema.ts(2,10): error TS2305: Module '"@prisma/client"' has no exported member 'Role'.
+services/UserService.ts(4,10): error TS2305: Module '"@prisma/client"' has no exported member 'Role'.

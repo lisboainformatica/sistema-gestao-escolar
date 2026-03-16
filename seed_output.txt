@@ -1,0 +1,18 @@
+Loaded Prisma config from prisma.config.ts.
+
+⚠️ No seed command configured
+
+To seed your database, add a seed property to the migrations section in your Prisma config file.
+
+Example
+
+  // prisma.config.ts
+  export default defineConfig({
+    migrations: {
+      seed: 'bun·./prisma/seed.ts',
+    },
+    datasource: {
+      url: '[your database URL]',
+    },
+  })
+
